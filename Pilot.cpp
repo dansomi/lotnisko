@@ -17,33 +17,37 @@ Pilot::Pilot(string name, bool mood, bool exhausted)
 	this -> exhausted = exhausted;
 	experience = 0;
 }
+Pilot::Pilot()
+{
+}
 void Pilot::addExperience(){
 	experience++;
 }
 string Pilot::story()
 {
     ostringstream ss;
+		ss <<"Pilot ";
     ss << name;
-    ss <<"Pilot is in";
+    ss <<" is in ";
     if(mood)
     {
-        ss <<"good mood.\n";
+        ss <<"good mood. ";
     }
     else
-       ss <<"bad mood.\n";
-    ss <<"Pilot is";
+       ss <<"bad mood. ";
+    ss <<"Pilot is ";
     if(exhausted)
     {
-        ss <<"exhausted.\n";
+        ss <<"exhausted. ";
     }
     else{
-        ss <<"not exhausted.\n";
+        ss <<"not exhausted. ";
     }
 
     if(experience < 5)
-        ss << " He isn't experienced in flying by airplane. Can panic. ";
+        ss << "He isn't experienced in flying by airplane. Can panic.\n";
     else
-        ss <<"He is experienced in flying by airplane.";
+        ss <<"He is experienced in flying by airplane.\n";
 
     return ss.str();
 }
@@ -55,18 +59,15 @@ string Pilot::getName()
 {
     return name;
 }
-void Pilot::metoda()
-{
-	printf("pilot");
-}
 void Pilot::changeMood(bool newone)
 {
 	mood = newone;
+}
+bool Pilot::getExhausted()
+{
+	return mood;
 }
 int Pilot::getExperience()
 {
     return experience;
 }
-
-
-

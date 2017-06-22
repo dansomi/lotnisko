@@ -5,42 +5,48 @@
 #include "Customer.h"
 #include "Pilot.h"
 #include <string>
+#include <cstdio>
+#include <cstdlib>
 using namespace std;
 
 class Plane
 {
 private:
     string planeNumber;
-	float condition, fuel;
-	float neededFuel;
+	float condition;
+  int fuel;
+	int neededFuel;
 	int maxPassenger;
 	bool kidnaped;
 	Customer * passengers;
 	int numPassenger;
 	bool flying;
-	Pilot *pilot;
+	Pilot pilot;
+  bool isPilot;
 	bool destroy;
 
 public:
-	Plane(string planeNumber, float condition, float fuel, int maxPassenger);
+	Plane(string planeNumber, float condition, int fuel, int maxPassenger);
+  Plane();
 
-    bool isBigPlane(); //du¿y czy ma³y samolot - liczba pasazerow
-    bool isTerroristInside(); //terrorysci na pokladzie
+  bool getDestroy();
+  bool isTerroristInside(); //terrorysci na pokladzie
 	bool isFuelEnd();
-	void fly();
+	void fly(int amountOfFuel, int f);
 	void addPilot(Pilot p);
 	void addPassenger(Customer c);
 	void land();
 	bool isTrouble();
 	bool tryRescuePlane();
-
 	void crash();
 	string story();
-	int countStrenght();
+	float countStrenght();
+
     //akcesory
+  string getName();
 	float getCondition();
-	float getFuel();
-	float getNeededFuel();
+	int getFuel();
+	int getNeededFuel();
 	int getMaxPassenger();
 	bool isKidnaped();
 	Customer * getPassengerList();

@@ -16,15 +16,18 @@ using namespace std;
 class Customer : public Person
 {
 private:
-   	string name;
+  string name;
 	bool mood;
 	usefullness level;
 	int experience; // który lot i czy bedzie panikował
 	bool known; //czy znana
 	float levelOfKnown;
+  bool alive;
+
 public:
 
-    Customer (string name, bool known, usefullness level);
+    Customer (string name, bool f, usefullness l);
+    Customer();
     void changeUsefullness(usefullness newone);
     void addExperience();
     float generateFame(bool known);
@@ -39,9 +42,8 @@ public:
     bool isKnown();
     int getExperience();
     float getLevelOfKnown();
-	void metoda();
 	bool getMood();
+  void setDead();
+  bool getAlive();
 
 };
-
-

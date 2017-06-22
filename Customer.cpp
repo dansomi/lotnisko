@@ -10,15 +10,19 @@
 
 #pragma mark [ Metody obiektu ]
 using namespace std;
-Customer::Customer(string name, bool known, usefullness level)
+Customer::Customer(string name, bool f, usefullness l)
 {
     this -> name = name;
-    this -> known = known;
-    this -> level = level;
-
+    this -> known = f;
+    this -> level = l;
+    alive = true;
     experience = 0;
     mood = true;
     levelOfKnown = Customer::generateFame(known);
+}
+
+Customer::Customer()
+{
 }
 
 float Customer::generateFame(bool known)
@@ -58,40 +62,45 @@ string Customer::story()
     ss << name;
     if(known)
     {
-        ss <<"is famous.\n";
-        ss<<"His/Her level of famous is";
+        ss <<" is famous. ";
+        ss<<" His/Her level of famous is ";
         ss<< levelOfKnown;
     }
     else
-        ss<<"isn't famous at all.\n";
-    ss <<"He/She is";
+        ss<<" isn't famous at all. ";
+    ss <<" He/She is ";
     if(level == 0)
-        ss <<"no one special.\n";
+        ss <<"no one special. ";
     if(level == 1)
-        ss <<"police officer .\n";
+        ss <<"police officer . ";
     if(level == 2)
-        ss <<"soldier.\n";
+        ss <<"soldier. ";
     if(level == 3)
-        ss <<"firefighter.\n";
+        ss <<"firefighter. ";
     if(level == 4)
-        ss <<"negotiator\n";
+        ss <<"negotiator. ";
     if(level == 5)
-        ss <<"doctor.\n";
+        ss <<"doctor. ";
     if(level == 6)
-        ss <<"politician.\n";
+        ss <<"politician. ";
+      if(mood)
+      {
+          ss<<" He/She is in good mood ";
+      }
+      else
+      {
+        ss<<" He/She isn't in good mood. ";
+      }
     if(experience < 5)
-        ss << " He/She isn't experienced in flying by airplane. Can panic. ";
+        ss << " He/She isn't experienced in flying by airplane. Can panic. \n";
     else
-        ss <<"He/She is experienced in flying by airplane.";
+        ss <<"He/She is experienced in flying by airplane. \n";
 
 
 
     return ss.str();
 }
-void Customer::metoda()
-{
-	cout<<"Hello";
-}
+
 
 #pragma mark [ Akcesory ]
 bool Customer::getMood()
@@ -112,7 +121,14 @@ bool Customer::isKnown()
 {
     return known;
 }
-
+void Customer::setDead()
+{
+  alive = false;
+}
+bool Customer::getAlive()
+{
+  return alive;
+}
 int Customer::getExperience()
 {
     return experience;

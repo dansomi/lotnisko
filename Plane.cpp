@@ -4,27 +4,30 @@
 #pragma mark [ Metody obiektu ]
 using namespace std;
 //getter do destroy
-Plane::Plane(string planeNumber, float condition, float fuel, int maxPassenger)
+Plane::Plane(string planeNumber, float condition, int fuel, int maxPassenger)
 {
 	this -> planeNumber = planeNumber;
 	this -> condition = condition;
-	this -> fuel = fuel;
+	this -> fuel = fuel; //max paliwa
 	this -> maxPassenger = maxPassenger;
 	neededFuel = 0;
 	kidnaped = false;
-	pilot = NULL;
+	isPilot = false;
 	flying = false;
 	numPassenger = 0;
-	passengers = (Customer*)malloc(sizeof(Customer) * maxPassenger);
+	passengers = new Customer[maxPassenger];
 	destroy = false;
 }
 
+Plane::Plane()
+{
 
-//    bool isBigPlane(); //du¿y czy ma³y samolot - liczba pasazerow
+}
+
 bool Plane::isTerroristInside() //terrorysci na pokladzie
 {
 	int x = rand() % 101;
-	if(x <= 5)
+	if(x <= 7)
 	{
 		kidnaped = true;
 		return true;
@@ -39,45 +42,51 @@ bool Plane::isFuelEnd()
 	return false;
 }
 
-void Plane::fly()
+void Plane::fly(int amountOfFuel, int f )
 {
-	if(pilot == NULL)
+	if(!isPilot)
 	{
-		printf("Plane without pilot cant fly.\n");
+		std::cout << "Plane "<<planeNumber<<" without pilot cant fly.\n";
 		return;
 	}
 	if(flying)
 	{
-		printf("The plane is flying so there is some mistake\n");
+		std::cout << "Plane "<<planeNumber<<" is flying.\n";
+
 		return;
 	}
 	flying = true;
-	printf("Plane %s starts flying.\n", planeNumber);
+	neededFuel = amountOfFuel;
+	fuel = f;
+	std::cout << "Plane "<<planeNumber<<" starts flying.\n";
 }
 void Plane::addPilot(Pilot p)
 {
 	if(flying)
 	{
-		printf("The plane is flying so there is some mistake\n");
+		std::cout << "Plane "<<planeNumber<<" is flying so there is some mistake.\n";
 		return;
 	}
-	if(pilot != NULL)
+	if(isPilot)
 	{
-		printf("The plane has a pilot.\n");
+		std::cout << "Plane "<<planeNumber<<" has a pilot.\n";
+
 		return;
 	}
-	pilot = &p;
+	pilot = p;
+	isPilot = true;
+	std::cout << "Pilot was added to plane "<<planeNumber<<" .\n";
 }
 void Plane::addPassenger(Customer c)
 {
 	if(flying)
 	{
-		printf("The plane is flying so there is some mistake\n");
+		std::cout << "Plane "<<planeNumber<<" is flying so there is some mistake.\n";
 		return;
 	}
 	if(maxPassenger == numPassenger)
 	{
-		printf("There is no place in this plane.\n");
+		std::cout << "There is no place in plane "<<planeNumber<<".\n";
 		return;
 	}
 	passengers[numPassenger] = c;
@@ -88,21 +97,72 @@ void Plane::land()
 {
 	if(flying == false)
 	{
-		printf("The plane hasnt started his fly yet.\n");
+		std::cout << "Plane "<<planeNumber<<"  hasnt started his fly yet.\n";
 		return;
 	}
-	printf("The plane %s is landing.\n", planeNumber);
-	flying = false;
+
+	int birch = rand()%101; //brzoza
+	if(birch < 8)
+	{
+		std::cout << "The birch during the landing plane number "<<planeNumber<<" .\n";
+		Plane::crash();
+
+	}
+	else
+	{
+		std::cout << "Plane "<<planeNumber<<" is landing.\n";
+		flying = false;
+		condition -=0.0026;
+		neededFuel = 0;
+		fuel = 0;
+		kidnaped = false;
+		numPassenger = 0;
+		pilot.addExperience();
+		for(int i =0; i<numPassenger; i++)
+			passengers[i].addExperience();
+
+	}
 }
-//
-
-
 
 bool Plane::tryRescuePlane()
 {
-	printf("Dupa\n" );
-	//LOSUJEMY liczbe z jakiegos zakresu jesli iles tam wieksza to samolot uratowany wiec zmienna na true a w przeciwnym false
-	//+ wypisujemy komunikat ze jest proba uratowania samolotu a przed zwroceniem wartosci jeszcze piszemy czy sie nam udalo czy nie ;p
+	std::cout << "The crew "<<planeNumber<<" is trying to save the plane.\n";
+
+	if(rand()%100 < 44)
+	{
+		std::cout << "Plane "<<planeNumber<<" is rescued\n";
+		return false;
+	}
+
+	std::cout << "Plane "<<planeNumber<<" isn't rescued\n";
+	return true;
+
+}
+
+float Plane::countStrenght()
+{
+
+	float counter = 0;
+	float help=0;
+
+	for(int i= 0; i<numPassenger; i++)
+	{
+
+		counter+=passengers[i].getExperience();
+		if((int)passengers[i].getLevel() != 0)
+			help++; //za kazda osobe ktora jest uzyteczna dodajemy +1;
+	}
+	if(numPassenger != 0)
+	{
+		counter/=numPassenger; // liczymy srednie doswiadczenie na jednego pasazera
+		help/=numPassenger;
+	}
+
+	counter+=help;
+	counter+= pilot.getExperience();
+	if(pilot.getExhausted())
+		counter -=1;
+	return counter;
 
 }
 
@@ -110,78 +170,71 @@ bool Plane::isTrouble()
 {
 	bool trouble = false;
 	float weatherCondition = -200 + rand() / (RAND_MAX + 1.0) * 600;
+	std::cout << "The plane "<<planeNumber<<" has some trouble.\n";
 	if(Plane::isTerroristInside())
 	{
 		trouble = true;
-		printf("The plane was kidnaped. Let's see if it survived.\n");
-		neededFuel+=rand()%31; // neededFuel = neededFuel + rand...
+		std::cout << "The plane "<<planeNumber<<" was kidnaped. Let's see if it survived.\n";
+		neededFuel+=rand()%45; // neededFuel = neededFuel + rand...
 		if(Plane::isFuelEnd())
 		{
-			printf("The plane %s hasnt fuel.\n",planeNumber );
-			Plane::crash();
+			std::cout << "Plane "<<planeNumber<<" hasnt fuel.\n";
 			return true;
 		}
 
 	}
-	else if(weatherCondition < -180)
+	if(weatherCondition < -100)
 	{
 		trouble = true;
-		printf("The weather is bad. The plane can crash.\n");
-		neededFuel+=rand()%71; // neededFuel = neededFuel + rand...
+		std::cout << "The weather is bad. The plane "<<planeNumber<<" can crash.\n";
+		neededFuel+=rand()%40; // neededFuel = neededFuel + rand...
 		if(Plane::isFuelEnd())
 		{
-			printf("The plane %s hasnt fuel.\n",planeNumber );
-			//Plane::crash();
+			std::cout << "Plane "<<planeNumber<<" hasnt fuel.\n";
 			return true;
 		}
+		condition-=0.006; //zla pogoda troche niszczy nam samolot
 	}
-	else if(condition <0.07){
+	if(condition <0.03){
 		trouble = true;
-		printf("The plane %s is in bad condition.\n",planeNumber );
-		//Plane::crash(); - jednak chyba wszystkie crash beda w main dla kazdego true -> crash()
+			std::cout << "Plane "<<planeNumber<<"is in bad condition.\n";
 		return true;
 	}
-	if(trouble){
-		int counter = countStrenght();
-		if(counter > 6)
+	if(trouble)
+	{
+		float counter =Plane::countStrenght();
+		if(counter > 0.9)
 			trouble = Plane::tryRescuePlane(); //probujemy uratowac samolot zobaczymy czy sie nam uda
 
 	}
+
 	return trouble;
-	//przed returnem mozna jeszcze zrobic losowanie jakiejs liczby i jeslii wieksza/mniejsza to brzoza i samochod sie crashuje
+
 	//TRUE - CRASH W MAINIE
 }
 
 
+
+
 void Plane::crash()
 {
-	printf("The plane %s ends his life with %d passangers on board.\n", planeNumber, numPassenger);
+	std::cout << "Plane "<<planeNumber<<" ends his life with "<<numPassenger<<" passangers on board.";
+	std::cout << " CRASH! " << '\n';
 	destroy = true;
+	for( int i =0; i< numPassenger; i++)
+	{
+		passengers[i].setDead();
+	}
 
 }
+
+
+///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 string Plane::story() //historia do zaimplementowania
 {
 }
-
-int Plane::countStrenght()
-{
-	int counter = 0;
-	int help=0;
-	for(int i= 0; i<numPassenger; i++)
-	{
-		counter+=passengers[i].getExperience();
-		if((int)passengers[i].getLevel() != 0)
-			help++; //za kazda osobe ktora jest uzyteczna dodajemy +1;
-	}
-	counter/=numPassenger; // liczymy srednie doswiadczenie na jednego pasazera
-	help/=numPassenger;
-	counter+=help;
-
-	counter+= pilot->getExperience();
-	return counter;
-//pod uwage bierzemy experience każdego pasazera, experience pilota, usefullness pasazerow
-}
-
 
     //akcesory
 	#pragma mark [ Akcesory ]
@@ -190,12 +243,17 @@ float Plane::getCondition()
 	return condition;
 }
 
-float Plane::getFuel()
+int Plane::getFuel()
 {
 	return fuel;
 }
 
-float Plane::getNeededFuel()
+string Plane::getName()
+{
+	return planeNumber;
+}
+
+int Plane::getNeededFuel()
 {
 	return neededFuel;
 }
@@ -223,4 +281,9 @@ int Plane::getNumberOfPassengers()
 bool Plane::isFlying()
 {
 	return flying;
+}
+
+bool Plane::getDestroy()
+{
+	return destroy;
 }

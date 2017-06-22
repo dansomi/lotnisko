@@ -16,16 +16,16 @@ private:
 public:
 
     Pilot (string name, bool mood, bool exhausted);
+    Pilot();
     void addExperience();
     string story();
     void changeMood(bool newMood);
 
 
     //akcesory
-
+    bool getExhausted();
     string getName();
     int getExperience();
-    void metoda();
     bool getMood();
 
 

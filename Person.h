@@ -18,11 +18,10 @@ class Person
 		bool mood;
 		string name;
 	public:
-		virtual void metoda() = 0;
 
 		virtual string getName() = 0;
 		virtual bool getMood() = 0;
-    		virtual int getExperience() = 0;
+    virtual int getExperience() = 0;
 		virtual void addExperience() = 0;
 		virtual string story()=0;
 		virtual void changeMood(bool newMood)=0;
